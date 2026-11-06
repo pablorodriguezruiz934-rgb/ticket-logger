@@ -1,0 +1,7 @@
+dao\DatabaseConnectionManager.class
+dao\FactionDAOImpl.class
+servlets\factionServlet.class
+dao\FactionDAO.class
+entity\Faction.class
+listeners\AppContextListener.class
+dao\DataInitializer.class

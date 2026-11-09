@@ -4,7 +4,7 @@ import org.alixar.daw2.pablo.dwese_ticket_logger_webapp.entity.Region;
 
 import java.util.List;
 public interface RegionDAO {
-    List<Region> listAllRegions() ;
+    List<Region> listAllRegions();
     void insertRegion(Region region);
     void updateRegion(Region region);
     void deleteRegion(Long id);

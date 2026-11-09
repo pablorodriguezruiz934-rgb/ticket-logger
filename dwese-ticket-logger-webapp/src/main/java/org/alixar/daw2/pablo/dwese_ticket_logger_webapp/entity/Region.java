@@ -1,10 +1,14 @@
 package org.alixar.daw2.pablo.dwese_ticket_logger_webapp.entity;
+import jakarta.persistence.*; // Anotaciones de JPA
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.List;
+
 /**
  * La clase `Region` representa una entidad que modela una región dentro de la
  base de datos.
@@ -17,44 +21,44 @@ import jakarta.validation.constraints.NotNull;
  * métodos comunes como getters, setters, constructores, y otros métodos estándar
  de los objetos.
  */
-@Data // Esta anotación de Lombok genera automáticamente los siguientesmétodos:
-// - Getters y setters para todos los campos (id, code, name).
-// - Los métodos `equals()` y `hashCode()` basados en todos los campos notransitorios.
-// - El método `toString()` que incluye todos los campos.
-// - Un método `canEqual()` que verifica si una instancia puede ser igual aotra.
-        // Esto evita tener que escribir manualmente todos estos métodos y mejora lamantenibilidad del código.
-@NoArgsConstructor // Esta anotación genera un constructor sin argumentos(constructor vacío),
-// es útil cuando quieres crear un objeto `Region` sin inicializarloinmediatamente
-// con valores. Esto es muy útil en frameworks como Hibernate o JPA,
-// que requieren un constructor vacío para la creación de entidades.
-        @AllArgsConstructor // Esta anotación genera un constructor que acepta todoslos campos como parámetros (id, code, name).
-        // Este constructor es útil cuando necesitas crear una instancia completamenteinicializada de `Region`.
-        // Ejemplo: new Region(1, "01", "Andalucía");
-        public class Region {
-            // Campo que almacena el identificador único de la región. Este campo sueleser autogenerado
-            // por la base de datos, lo que lo convierte en un buen candidato para unaclave primaria.
-            // No añadimos validación en el ID porque en este caso puede ser nulo alinsertarse
-            private Long id;
-            // Campo que almacena el código de la región, normalmente una cadena cortaque identifica la región.
-            // Ejemplo: "01" para Andalucía.
-            @NotEmpty(message = "{msg.region.code.notEmpty}")
-            @Size(max = 2, message = "{msg.region.code.size}")
-            private String code;
-            // Campo que almacena el nombre completo de la región, como "Andalucía" o"Cataluña".
-            @NotEmpty(message = "{msg.region.name.notEmpty}")
-            @Size(max = 100, message = "{msg.region.name.size}")
-            private String name;
-            /**
-             * Este es un constructor personalizado que no incluye el campo `id`.
-             * Se utiliza para crear instancias de `Region` cuando no es necesario o no
-             se conoce el `id` de la región
-             * (por ejemplo, antes de insertar la región en la base de datos, donde el
-             `id` es autogenerado).
-             * @param code Código de la región.
-             * @param name Nombre de la región.
-             */
-            public Region(String code, String name) {
-                this.code = code;
-                this.name = name;
-            }
-        }
+@Entity // Marca esta clase como una entidad gestionada por JPA.
+@Table(name = "regions") // Especifica el nombre de la tabla asociada a estaentidad.
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Region {
+    // Campo que almacena el identificador único de la región.
+    // Es una clave primaria autogenerada por la base de datos.
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    // Campo que almacena el código de la región, normalmente una cadena cortaque identifica la región.
+    // Ejemplo: "01" para Andalucía.
+    @NotEmpty(message = "{msg.region.code.notEmpty}")
+    @Size(max = 2, message = "{msg.region.code.size}")
+    @Column(name = "code", nullable = false, length = 2) // Define la columnacorrespondiente en la tabla.
+    private String code;
+    // Campo que almacena el nombre completo de la región, como "Andalucía" o"Cataluña".
+    @NotEmpty(message = "{msg.region.name.notEmpty}")
+    @Size(max = 100, message = "{msg.region.name.size}")
+    @Column(name = "name", nullable = false, length = 100) // Define la columnacorrespondiente en la tabla.
+    // Relación uno a muchos con la entidad Province.
+// Una región puede tener muchas provincias.
+    @OneToMany(mappedBy = "region", cascade = CascadeType.ALL, fetch =
+            FetchType.LAZY)
+    private List<Province> provinces;
+    private String name;
+    /**
+     * Este es un constructor personalizado que no incluye el campo `id`.
+     * Se utiliza para crear instancias de `Region` cuando no es necesario o no
+     se conoce el `id` de la región
+     * (por ejemplo, antes de insertar la región en la base de datos, donde el
+     `id` es autogenerado).
+     * @param code Código de la región.
+     * @param name Nombre de la región.
+     */
+    public Region(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+}
